@@ -80,6 +80,47 @@ void Error_Handler(void);
 #define A1_GPIO_Port GPIOB
 #define A2_Pin GPIO_PIN_2
 #define A2_GPIO_Port GPIOB
+#define A3_Pin GPIO_PIN_3
+#define A3_GPIO_Port GPIOB
+#define A4_Pin GPIO_PIN_4
+#define A4_GPIO_Port GPIOB
+#define A5_Pin GPIO_PIN_5
+#define A5_GPIO_Port GPIOB
+#define A6_Pin GPIO_PIN_6
+#define A6_GPIO_Port GPIOB
+#define A7_Pin GPIO_PIN_7
+#define A7_GPIO_Port GPIOB
+#define A8_Pin GPIO_PIN_8
+#define A8_GPIO_Port GPIOB
+#define A9_Pin GPIO_PIN_9
+#define A9_GPIO_Port GPIOB
+#define A10_Pin GPIO_PIN_10
+#define A10_GPIO_Port GPIOB
+#define A11_Pin GPIO_PIN_11
+#define A11_GPIO_Port GPIOB
+#define A12_Pin GPIO_PIN_12
+#define A12_GPIO_Port GPIOB
+#define A13_Pin GPIO_PIN_13
+#define A13_GPIO_Port GPIOB
+#define A14_Pin GPIO_PIN_14
+#define A14_GPIO_Port GPIOB
+#define A15_Pin GPIO_PIN_15
+#define A15_GPIO_Port GPIOB
+
+#define RESET_Pin GPIO_PIN_1
+#define RESET_GPIO_Port GPIOC
+
+#define CLK_Pin GPIO_PIN_2
+#define CLK_GPIO_Port GPIOC
+
+#define READRQ_Pin GPIO_PIN_3
+#define READRQ_GPIO_Port GPIOC
+
+#define WRITERQ_Pin GPIO_PIN_4
+#define WRITERQ_GPIO_Port GPIOC
+
+#define IOREQ_Pin GPIO_PIN_5
+#define IOREQ_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

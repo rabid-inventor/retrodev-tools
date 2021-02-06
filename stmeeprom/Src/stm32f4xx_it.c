@@ -48,6 +48,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
 
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -198,6 +199,19 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
-
+/* Handle PB12 interrupt */
+void EXTI15_10_IRQHandler(void) {
+    /* Make sure that interrupt flag is set */
+    if ( __HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_12)) {
+        /* Do your stuff when PB12 is changed */
+        
+        
+        /* Clear interrupt flag */
+			 HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12); 
+			 
+			
+    }
+		 HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12); 
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

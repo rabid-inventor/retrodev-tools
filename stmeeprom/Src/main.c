@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include "software.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,7 +34,17 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define DEBUG_INFO printf( "DEBUG:::: LINE %d FILE %s in function %s \n", __LINE__, __FILE__ , __func__)
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+//#define GETCHAR_PROTOTYPE int __io_getchar(void) 
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#define GETCHAR_PROTOTYPE int fgetc(FILE *f) 
+#endif
 
+#define DR_INPUT 0xAAAA0000
+#define DR_OUPUT 0x5555
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,7 +58,9 @@ RTC_HandleTypeDef hrtc;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-
+uint8_t outputDataBuffer;
+uint8_t inputDataBuffer;
+uint16_t currentAddress;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,7 +69,12 @@ static void MX_GPIO_Init(void);
 static void MX_RTC_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+void writeDataBus(uint8_t data);
+uint8_t readDataBus(void);
+uint16_t readAddressBus(void);
+void configureInterupts(void);
+void issueReset(void);
+uint8_t fetchData(uint16_t address);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -80,7 +98,29 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+	/* notes to myself
+GPIOx->MODER = 0xFFFFFFFF this is 
+accessing IO ports directly the direction register 2 bits per pin 
+00 input
+01 ouput
+10 altmode
+11 analog
+GPIOx-> OTYPER
+output type register 
+0 = push pull
+1 = open drain
+GPIOx->PUPDR
+pullup pull down register
+2 bits per pin
+00 no pulll
+01 pull up
+10 pull down
+GPIOx -> IDR inupt register
+GPIOx-> ODR output register
 
+
+
+*/
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -95,7 +135,8 @@ int main(void)
   MX_RTC_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+	writeDataBus(INST_NOP);
+		
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,7 +144,13 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+		issueReset();
+		writeDataBus(INST_NOP);
+		printf("A: %xxxx",readAddressBus());
+		inputDataBuffer = readDataBus();
+		//note write address is valid from up cycle Q(which is down cycle on clk)
+		//
+		//HAL_Delay(1);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -300,7 +347,66 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void configureInterupts(void){
+/* EXTI interrupt init*/
+	
+}
 
+uint16_t readAddressBus(void){
+	uint16_t returnData;
+	returnData = GPIOB->IDR;
+	return returnData;
+}
+
+void writeDataBus(uint8_t data){
+	GPIOA->MODER = DR_OUPUT;
+	GPIOA->ODR = (uint32_t)data;
+	
+}
+
+uint8_t readDataBus(void){
+	uint8_t returnData;
+	GPIOA->MODER = DR_INPUT;
+	returnData = GPIOA->IDR;
+	return returnData;
+}
+
+uint8_t fetchData(uint16_t address){
+	if (address == RESET_VECTOR_ADDRESS_MSB){
+			outputDataBuffer = (uint8_t)RESET_VECTOR >> 8;
+	}
+	if (address == RESET_VECTOR_ADDRESS_LSB){
+			outputDataBuffer = (uint8_t)RESET_VECTOR & 0xFF;
+	}
+	if (address >= SOFTWARE_BEGIN){
+		outputDataBuffer = romimage[address - SOFTWARE_BEGIN];
+	}
+	
+	
+	
+	
+}
+
+void issueReset(void){
+	HAL_GPIO_WritePin(GPIOC, RESET_Pin ,GPIO_PIN_RESET);
+	HAL_Delay(1);
+	HAL_GPIO_WritePin(GPIOC, RESET_Pin ,GPIO_PIN_SET);
+}
+/*Custom printf debuging*/ 
+PUTCHAR_PROTOTYPE   /**RETARGET PRINTF TO UART1***/
+{	
+	
+   HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1,0xF);
+
+  return ch;
+}
+
+GETCHAR_PROTOTYPE
+{
+	uint8_t ch;
+	HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, 0xff);
+	return ch;
+}
 /* USER CODE END 4 */
 
 /**
