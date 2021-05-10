@@ -1,14 +1,14 @@
 --- Symbol List (sorted by symbol)
+----                     f050                  
 0.FREE_BYTES             0000                  
 1.CLEAR_STACK            f005              (R )
-2.VSLP1                  f00c              (R )
 AUDC0                    0015                  
 AUDC1                    0016                  
 AUDF0                    0017                  
 AUDF1                    0018                  
 AUDV0                    0019                  
 AUDV1                    001a                  
-COLUBK                   0009                  
+COLUBK                   0009              (R )
 COLUP0                   0006                  
 COLUP1                   0007                  
 COLUPF                   0008                  
@@ -25,8 +25,8 @@ CXPPMM                   0007
 ENABL                    001f                  
 ENAM0                    001d                  
 ENAM1                    001e                  
-GRP0                     001b                  
-GRP1                     001c                  
+GRP0                     001b              (R )
+GRP1                     001c              (R )
 HMBL                     0024                  
 HMCLR                    002b                  
 HMM0                     0022                  
@@ -42,11 +42,15 @@ INPT4                    000c
 INPT5                    000d                  
 INTIM                    0284                  
 NO_ILLEGAL_OPCODES       0000 ????         (R )
+NTSC_LINES               00c0                  
 NUSIZ0                   0004                  
 NUSIZ1                   0005                  
+Overscan                 f049              (R )
+PAL_LINES                00f2              (R )
 PF0                      000d                  
 PF1                      000e                  
 PF2                      000f                  
+Picture                  f02e              (R )
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -54,9 +58,10 @@ RESM0                    0012
 RESM1                    0013                  
 RESMP0                   0028                  
 RESMP1                   0029                  
-RESP0                    0010                  
-RESP1                    0011                  
+RESP0                    0010              (R )
+RESP1                    0011              (R )
 RSYNC                    0003                  
+StartOfFrame             f00a              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
 SWCHA                    0280                  
@@ -69,12 +74,13 @@ TIM1T                    0294
 TIM64T                   0296                  
 TIM8T                    0295                  
 TIMINT                   0285                  
-VBLANK                   0001                  
+VBLANK                   0001              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  
 VDELP1                   0026                  
 VERSION_MACRO            006d                  
 VERSION_VCS              006a                  
+VerticalBlank            f01e              (R )
 VSYNC                    0000              (R )
 WSYNC                    0002              (R )
 --- End of Symbol List.

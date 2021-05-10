@@ -30,7 +30,7 @@
      25  0000 ????						;			    used for code assembly.
      26  0000 ????						; 1.04  12/NOV/2003	 Added TIA_BASE_WRITE_ADDRESS and TIA_BASE_READ_ADDRESS for
      27  0000 ????						;			 convenient disassembly/reassembly compatibility for hardware
-     28  0000 ????						;			 mirrored reading/writing differences.	This is more a 
+     28  0000 ????						;			 mirrored reading/writing differences.	This is more a
      29  0000 ????						;			 readability issue, and binary compatibility with disassembled
      30  0000 ????						;			 and reassembled sources.  Per Manuel Rotschkar's suggestion.
      31  0000 ????						; 1.03  12/MAY/2003	 Added SEG segment at end of file to fix old-code compatibility
@@ -72,7 +72,7 @@
      67  0000 ????						; for the mirrored ROM hardware registers.
      68  0000 ????
      69  0000 ????						; Usage: As per above, define the TIA_BASE_READ_ADDRESS and/or TIA_BASE_WRITE_ADDRESS
-     70  0000 ????						; using the -D command-line switch, as required.  If the addresses are not defined, 
+     70  0000 ????						; using the -D command-line switch, as required.  If the addresses are not defined,
      71  0000 ????						; they defaut to the TIA_BASE_ADDRESS.
      72  0000 ????
      73  0000 ????				      IFNCONST	TIA_BASE_READ_ADDRESS
@@ -239,13 +239,13 @@
      31  0000 ????						;
      32  0000 ????						; 1.02  14/JUN/2003	 - VERTICAL_SYNC macro added
      33  0000 ????						;			   (standardised macro for vertical synch code)
-     34  0000 ????						; 1.01  22/MAR/2003	 - SLEEP macro added. 
+     34  0000 ????						; 1.01  22/MAR/2003	 - SLEEP macro added.
      35  0000 ????						;			 - NO_ILLEGAL_OPCODES switch implemented
      36  0000 ????						; 1.0	22/MAR/2003		Initial release
      37  0000 ????
-     38  0000 ????						; Note: These macros use illegal opcodes.  To disable illegal opcode usage, 
+     38  0000 ????						; Note: These macros use illegal opcodes.  To disable illegal opcode usage,
      39  0000 ????						;   define the symbol NO_ILLEGAL_OPCODES (-DNO_ILLEGAL_OPCODES=1 on command-line).
-     40  0000 ????						;   If you do not allow illegal opcode usage, you must include this file 
+     40  0000 ????						;   If you do not allow illegal opcode usage, you must include this file
      41  0000 ????						;   *after* including VCS.H (as the non-illegal opcodes access hardware
      42  0000 ????						;   registers and require them to be defined first).
      43  0000 ????
@@ -378,7 +378,12 @@
     170  0000 ????						; EOF
 ------- FILE GOS.asm
       5  0000 ????
-      6  f000					      ORG	$F000
+      6  0000 ????
+      7  0000 ????	       00 c0	   NTSC_LINES =	#192
+      8  0000 ????	       00 f2	   PAL_LINES  =	#242
+      9  0000 ????
+     10  0000 ????
+     11  f000					      ORG	$F000
       0  f000					      CLEAN_START
       1  f000		       78		      sei
       2  f001		       d8		      cld
@@ -395,15 +400,115 @@
      13  f007		       48		      pha
      14  f008		       d0 fb		      bne	.CLEAR_STACK
      15  f00a
-      0  f00a					      VERTICAL_SYNC
-      1  f00a		       a9 0e		      lda	#%1110
-      2  f00c		       85 02	   .VSLP1     sta	WSYNC
-      3  f00e		       85 00		      sta	VSYNC
-      4  f010		       4a		      lsr
-      5  f011		       d0 f9		      bne	.VSLP1
-      9  f013
-     10  f013
-     11  f013
-     12  f013
-     13  fffe					      ORG	$FFFE
-     14  fffe		       00 f0		      .word.w	$F000
+     13  f00a
+     14  f00a
+     15  f00a				   StartOfFrame
+     16  f00a
+     17  f00a
+     18  f00a
+     19  f00a							; Start of new frame
+     20  f00a							; Start of vertical blank processing
+     21  f00a
+     22  f00a		       a9 00		      lda	#0
+     23  f00c		       85 01		      sta	VBLANK
+     24  f00e		       a9 02		      lda	#2
+     25  f010		       85 00		      sta	VSYNC
+     26  f012		       85 02		      sta	WSYNC
+     27  f014		       85 02		      sta	WSYNC
+     28  f016		       85 02		      sta	WSYNC	; 3 scanlines of VSYNC signal
+     29  f018		       a9 00		      lda	#0
+     30  f01a		       85 00		      sta	VSYNC
+     31  f01c
+     32  f01c
+     33  f01c							;------------------------------------------------
+     34  f01c
+     35  f01c							; 37 scanlines of vertical blank...
+     36  f01c
+     37  f01c
+     38  f01c
+     39  f01c		       a2 00		      ldx	#0
+     40  f01e
+     41  f01e		       85 02	   VerticalBlank sta	WSYNC
+     42  f020
+     43  f020		       e8		      inx
+     44  f021
+     45  f021		       e0 25		      cpx	#37
+     46  f023
+     47  f023		       d0 f9		      bne	VerticalBlank
+     48  f025
+     49  f025							;------------------------------------------------
+     50  f025
+     51  f025							; Do 192 scanlines of color-changing (our picture)
+     52  f025
+     53  f025		       a2 2d		      ldx	#45
+     54  f027		       86 09		      stx	COLUBK
+     55  f029		       a2 00		      ldx	#0	; this counts our scanline number
+     56  f02b		       85 3c		      sta	60
+     57  f02d
+     58  f02d		       ea		      nop
+     59  f02e
+     60  f02e
+     61  f02e				   Picture		; change background color (rainbow effect)
+     62  f02e							;lda #1
+     63  f02e
+     64  f02e		       86 3c		      stx	60
+     65  f030		       85 10		      sta	RESP0
+     66  f032		       85 11		      sta	RESP1
+     67  f034		       a2 aa		      ldx	#$AA
+     68  f036		       86 1b		      stx	GRP0
+     69  f038		       86 1c		      stx	GRP1
+     70  f03a		       85 02		      sta	WSYNC	; wait till end of scanline
+     71  f03c
+     72  f03c
+     73  f03c		       a6 3c		      ldx	60
+     74  f03e		       e8		      inx
+     75  f03f
+     76  f03f		       e4 f2		      cpx	PAL_LINES
+     77  f041
+     78  f041		       d0 eb		      bne	Picture
+     79  f043
+     80  f043							;--------------------------------------------	     ;------------------------------------------------
+     81  f043
+     82  f043
+     83  f043
+     84  f043
+     85  f043
+     86  f043
+     87  f043
+     88  f043		       a9 42		      lda	#%01000010
+     89  f045
+     90  f045		       85 01		      sta	VBLANK	; end of screen - enter blanking
+     91  f047
+     92  f047
+     93  f047
+     94  f047							; 30 scanlines of overscan...
+     95  f047
+     96  f047
+     97  f047
+     98  f047		       a2 00		      ldx	#0
+     99  f049
+    100  f049		       85 02	   Overscan   sta	WSYNC
+    101  f04b
+    102  f04b		       e8		      inx
+    103  f04c
+    104  f04c		       e0 1e		      cpx	#30
+    105  f04e
+    106  f04e		       d0 f9		      bne	Overscan
+    107  f050
+    108  f050
+    109  f050
+    110  f050
+    111  f050
+    112  f050
+    113  f050
+    114  f050
+    115  f050
+    116  f050				   ----
+    117  f050
+    118  f050		       4c 0a f0 	      jmp	StartOfFrame	; return to begining of the frame
+    119  f053
+    120  f053
+    121  f053
+    122  f053					      seg
+    123  fffe					      ORG	$FFFE
+    124  fffe		       00 f0		      .word.w	$F000
