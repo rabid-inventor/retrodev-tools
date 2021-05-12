@@ -510,5 +510,7 @@
     120  f053
     121  f053
     122  f053					      seg
-    123  fffe					      ORG	$FFFE
-    124  fffe		       00 f0		      .word.w	$F000
+    123  fffa					      ORG	$FFFA
+    124  fffa		       00 f0		      .word.w	$F000
+    125  fffc		       00 f0		      .word.w	$F000
+    126  fffe		       00 f0		      .word.w	$F000

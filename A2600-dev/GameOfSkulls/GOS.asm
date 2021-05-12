@@ -7,6 +7,8 @@
 NTSC_LINES = #192
 PAL_LINES = #242
 
+LINE_COUNT = $80
+FRAME_COUNT = $81
 
     ORG $F000
     CLEAN_START
@@ -61,7 +63,7 @@ VerticalBlank   sta WSYNC
 Picture                      ; change background color (rainbow effect)
                 ;lda #1
                 
-                stx 60
+                stx LINE_COUNT
                 sta RESP0
                 sta RESP1
                 ldx #$AA
@@ -78,12 +80,6 @@ Picture                      ; change background color (rainbow effect)
                 bne Picture
 
 ;--------------------------------------------       ;------------------------------------------------
-
-
-
-   
-
- 
 
                 lda #%01000010
 
@@ -116,9 +112,78 @@ Overscan        sta WSYNC
 ----
 
         jmp StartOfFrame ; return to begining of the frame
+ 
+        ORG $FA00
+        ;Created using Atari Dev Studio
+;assembly format (bottom to top)
 
+skullfwd:
+	.byte %00000000 ;
+	.byte %01010100 ;
+	.byte %01111100 ;
+	.byte %01101100 ;
+	.byte %11101110 ;
+	.byte %10010010 ;
+	.byte %10010010 ;
+	.byte %01111100 ;
+Sprite2:
+	.byte %00000000 ;
+	.byte %01010100 ;
+	.byte %01111100 ;
+	.byte %01101100 ;
+	.byte %11111110 ;
+	.byte %10010010 ;
+	.byte %10010010 ;
+	.byte %01111100 ;
+Sprite3:
+	.byte %00000000 ;
+	.byte %01010100 ;
+	.byte %01111100 ;
+	.byte %01101100 ;
+	.byte %11111110 ;
+	.byte %10010010 ;
+	.byte %10010010 ;
+	.byte %01111100 ;
+Sprite4:
+	.byte %00000000 ;
+	.byte %01010000 ;
+	.byte %01111011 ;
+	.byte %01011000 ;
+	.byte %11011100 ;
+	.byte %10101100 ;
+	.byte %10101111 ;
+	.byte %01111000 ;
+Sprite5:
+	.byte %00000000 ;
+	.byte %00101000 ;
+	.byte %00111101 ;
+	.byte %00101100 ;
+	.byte %01101110 ;
+	.byte %01010110 ;
+	.byte %01010111 ;
+	.byte %00111100 ;
+Sprite6:
+	.byte %00101000 ;
+	.byte %00111101 ;
+	.byte %00101100 ;
+	.byte %01101110 ;
+	.byte %01010110 ;
+	.byte %01010111 ;
+	.byte %00111100 ;
+	.byte %00000000 ;
+Sprite7:
+	.byte %01111111 ;
+	.byte %10001000 ;
+	.byte %10010000 ;
+	.byte %01101111 ;
+	.byte %10010000 ;
+	.byte %00010010 ;
+	.byte %00010100 ;
+	.byte %11101111 ;
 
     
     seg
-    ORG $FFFE
+    ORG $FFFA
+    .word $F000
+    .word $F000
     .word $F000
