@@ -3,16 +3,42 @@
     include "vcs.h"
     include "macro.h"
 
-
+VERT_BLANK = #37
 NTSC_LINES = #192
 PAL_LINES = #242
 
 LINE_COUNT = $80
 FRAME_COUNT = $81
+PLAYER_POS_X = $82
+PLAYER_POX_Y = $83
+P_SPRITE_ADD = $89
+NEXT_P_SPRITE = $84
+SPRITE_LOC = $85
+PF0G = $84
+PF1G = $85
+PF2G = $86
+
 
     ORG $F000
     CLEAN_START
     
+;prep sprite used to buffer sprite line into page zero ram ready for drawing cycle
+;x = address if sprite
+;y = index if sprite line
+;a used to move sprite 	
+prepSpite1
+	
+	lda x,y 
+	sta NEXT_P_SPRITE
+
+
+drawSprite1
+
+
+	
+
+
+
 
 StartOfFrame
 
@@ -25,8 +51,11 @@ StartOfFrame
         sta VBLANK
         lda #2
         sta VSYNC
+		;stuff
         sta WSYNC
+		;stuff
         sta WSYNC
+		;stuff
         sta WSYNC               ; 3 scanlines of VSYNC signal
         lda #0
         sta VSYNC           
@@ -42,49 +71,45 @@ StartOfFrame
 
 VerticalBlank   sta WSYNC
 
+; stuff can be done here no more than 70 machine cycles
+
         inx
-
-        cpx #37
-
+        cpx #VERT_BLANK
         bne VerticalBlank
 
        ;------------------------------------------------
 
        ; Do 192 scanlines of color-changing (our picture)
 
-                ldx #45
+                ldx #55
                 stx COLUBK
                 ldx #0                ; this counts our scanline number
-                sta 60
-                
-                nop
+                ;sta 60
                 
 
 Picture                      ; change background color (rainbow effect)
                 ;lda #1
                 
                 stx LINE_COUNT
-                sta RESP0
-                sta RESP1
-                ldx #$AA
-                stx GRP0
-                stx GRP1
-                sta WSYNC              ; wait till end of scanline
-
-
-                ldx 60
-                inx
                 
-                cpx PAL_LINES
+				ldx #0 
+                stx WSYNC              ; wait till end of scanline
+				; I can do stuff here but not much 22 cpu cycles
 
+
+				;do this at the end  
+                ldx LINE_COUNT
+                inx
+                cpx #PAL_LINES ;cycle counting
                 bne Picture
+
 
 ;--------------------------------------------       ;------------------------------------------------
 
                 lda #%01000010
 
                 sta VBLANK          ; end of screen - enter blanking
-
+ 
 
 
    ; 30 scanlines of overscan...

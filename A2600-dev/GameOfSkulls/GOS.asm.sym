@@ -1,5 +1,5 @@
 --- Symbol List (sorted by symbol)
-----                     f050                  
+----                     f04a                  
 0.FREE_BYTES             0000                  
 1.CLEAR_STACK            f005              (R )
 AUDC0                    0015                  
@@ -22,11 +22,13 @@ CXM1P                    0001
 CXP0FB                   0002                  
 CXP1FB                   0003                  
 CXPPMM                   0007                  
+drawSprite1              f00f                  
 ENABL                    001f                  
 ENAM0                    001d                  
 ENAM1                    001e                  
-GRP0                     001b              (R )
-GRP1                     001c              (R )
+FRAME_COUNT              0081                  
+GRP0                     001b                  
+GRP1                     001c                  
 HMBL                     0024                  
 HMCLR                    002b                  
 HMM0                     0022                  
@@ -41,16 +43,25 @@ INPT3                    000b
 INPT4                    000c                  
 INPT5                    000d                  
 INTIM                    0284                  
+LINE_COUNT               0080              (R )
+NEXT_P_SPRITE            0084              (R )
 NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC_LINES               00c0                  
 NUSIZ0                   0004                  
 NUSIZ1                   0005                  
-Overscan                 f049              (R )
+Overscan                 f043              (R )
+P_SPRITE_ADD             0089                  
 PAL_LINES                00f2              (R )
 PF0                      000d                  
+PF0G                     0084                  
 PF1                      000e                  
+PF1G                     0085                  
 PF2                      000f                  
-Picture                  f02e              (R )
+PF2G                     0086                  
+Picture                  f030              (R )
+PLAYER_POS_X             0082                  
+PLAYER_POX_Y             0083                  
+prepSpite1               f00a                  
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -58,10 +69,18 @@ RESM0                    0012
 RESM1                    0013                  
 RESMP0                   0028                  
 RESMP1                   0029                  
-RESP0                    0010              (R )
-RESP1                    0011              (R )
+RESP0                    0010                  
+RESP1                    0011                  
 RSYNC                    0003                  
-StartOfFrame             f00a              (R )
+skullfwd                 fa00                  
+Sprite2                  fa08                  
+Sprite3                  fa10                  
+Sprite4                  fa18                  
+Sprite5                  fa20                  
+Sprite6                  fa28                  
+Sprite7                  fa30                  
+SPRITE_LOC               0085                  
+StartOfFrame             f00f              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
 SWCHA                    0280                  
@@ -80,7 +99,9 @@ VDELP0                   0025
 VDELP1                   0026                  
 VERSION_MACRO            006d                  
 VERSION_VCS              006a                  
-VerticalBlank            f01e              (R )
+VERT_BLANK               0025              (R )
+VerticalBlank            f023              (R )
 VSYNC                    0000              (R )
 WSYNC                    0002              (R )
+x                        0000 ????         (R )
 --- End of Symbol List.
