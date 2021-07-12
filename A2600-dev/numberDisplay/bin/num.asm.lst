@@ -482,11 +482,11 @@
      92  f05e		       b9 a8 f0 	      lda	PFG2,y
      93  f061		       85 0f		      sta	PF2
      94  f063
-     95  f063
+     95  f063							;6 cycles to play with 
      96  f063		       ea		      nop		;spare time to cycle past Drawing PF
      97  f064		       ea		      nop		;spare time to cycle past Drawing PF 
      98  f065		       ea		      nop		;spare time to cycle past Drawing PF
-     99  f066							;nop		  ;spare time to cycle past Drawing PF
+     99  f066
     100  f066
     101  f066
     102  f066							;draw first half of the PF can be done imendiatly are PF0 has been drawn to display 
@@ -503,110 +503,113 @@
     113  f079		       60		      rts		; ReTurn from Subroutine
     114  f07a
     115  f07a				   OverScan
-    116  f07a		       85 02		      sta	WSYNC	; Wait for SYNC (halts CPU until end of scanline)
-    117  f07c		       a9 02		      lda	#2	; LoaD Accumulator with 2 so D1=1
-    118  f07e		       85 01		      sta	VBLANK	; STore Accumulator to VBLANK, D1=1 turns image output off
-    119  f080
-    120  f080		       a9 00		      lda	#0
-    121  f082		       85 0d		      sta	PF0
-    122  f084		       85 0e		      sta	PF1
-    123  f086		       85 0f		      sta	PF2
-    124  f088		       85 02		      sta	WSYNC
-    125  f08a
-    126  f08a				   overcont
-    127  f08a
-    128  f08a		       a2 1b		      ldx	#27	; LoaD X with 27
-    129  f08c				   osLoop
-    130  f08c		       85 02		      sta	WSYNC	; Wait for SYNC (halts CPU until end of scanline)
-    131  f08e		       ca		      dex		; DEcrement X by 1
-    132  f08f		       d0 fb		      bne	osLoop	; Branch if Not Equal to 0
-    133  f091		       60		      rts		; ReTurn from Subroutine
-    134  f092
-    135  f092
-    136  f092							;;;;;;;;Sprites;;;;;;;;;;;;;;;;;
-    137  f092				   PFG0
-    138  f092		       ff		      .byte.b	%11111111
-    139  f093		       10		      .byte.b	%00010000
-    140  f094		       10		      .byte.b	%00010000
-    141  f095		       10		      .byte.b	%00010000
-    142  f096		       10		      .byte.b	%00010000
-    143  f097		       10		      .byte.b	%00010000
-    144  f098		       10		      .byte.b	%00010000
-    145  f099		       10		      .byte.b	%00010000
-    146  f09a		       10		      .byte.b	%00010000
-    147  f09b		       10		      .byte.b	%00010000
-    148  f09c		       ff		      .byte.b	%11111111
-    149  f09d
-    150  f09d				   PFG1
-    151  f09d		       ff		      .byte.b	%11111111
-    152  f09e		       00		      .byte.b	%00000000
-    153  f09f		       f0		      .byte.b	%11110000
-    154  f0a0		       30		      .byte.b	%00110000
-    155  f0a1		       30		      .byte.b	%00110000
-    156  f0a2		       f0		      .byte.b	%11110000
-    157  f0a3		       c0		      .byte.b	%11000000
-    158  f0a4		       c0		      .byte.b	%11000000
-    159  f0a5		       f0		      .byte.b	%11110000
-    160  f0a6		       00		      .byte.b	%00000000
-    161  f0a7		       ff		      .byte.b	%11111111
-    162  f0a8
-    163  f0a8				   PFG2
-    164  f0a8		       ff		      .byte.b	%11111111
-    165  f0a9		       00		      .byte.b	%00000000
-    166  f0aa		       0f		      .byte.b	%00001111
-    167  f0ab		       0c		      .byte.b	%00001100
-    168  f0ac		       0c		      .byte.b	%00001100
-    169  f0ad		       0f		      .byte.b	%00001111
-    170  f0ae		       0c		      .byte.b	%00001100
-    171  f0af		       0c		      .byte.b	%00001100
-    172  f0b0		       0f		      .byte.b	%00001111
-    173  f0b1		       00		      .byte.b	%00000000
-    174  f0b2		       ff		      .byte.b	%11111111
-    175  f0b3				   PFG3
-    176  f0b3		       ff		      .byte.b	%11111111
-    177  f0b4		       00		      .byte.b	%00000000
-    178  f0b5		       f0		      .byte.b	%11110000
-    179  f0b6		       90		      .byte.b	%10010000
-    180  f0b7		       90		      .byte.b	%10010000
-    181  f0b8		       90		      .byte.b	%10010000
-    182  f0b9		       90		      .byte.b	%10010000
-    183  f0ba		       90		      .byte.b	%10010000
-    184  f0bb		       f0		      .byte.b	%11110000
-    185  f0bc		       00		      .byte.b	%00000000
-    186  f0bd		       ff		      .byte.b	%11111111
-    187  f0be
-    188  f0be
-    189  f0be				   PFG4
-    190  f0be		       ff		      .byte.b	%11111111
-    191  f0bf		       00		      .byte.b	%00000000
-    192  f0c0		       3c		      .byte.b	%00111100
-    193  f0c1		       24		      .byte.b	%00100100
-    194  f0c2		       24		      .byte.b	%00100100
-    195  f0c3		       24		      .byte.b	%00100100
-    196  f0c4		       24		      .byte.b	%00100100
-    197  f0c5		       24		      .byte.b	%00100100
-    198  f0c6		       3c		      .byte.b	%00111100
-    199  f0c7		       00		      .byte.b	%00000000
-    200  f0c8		       ff		      .byte.b	%11111111
-    201  f0c9				   PFG5
-    202  f0c9		       ff		      .byte.b	%11111111
-    203  f0ca		       80		      .byte.b	%10000000
-    204  f0cb		       b6		      .byte.b	%10110110
-    205  f0cc		       b6		      .byte.b	%10110110
-    206  f0cd		       b6		      .byte.b	%10110110
-    207  f0ce		       b6		      .byte.b	%10110110
-    208  f0cf		       80		      .byte.b	%10000000
-    209  f0d0		       b6		      .byte.b	%10110110
-    210  f0d1		       b6		      .byte.b	%10110110
-    211  f0d2		       80		      .byte.b	%10000000
-    212  f0d3		       ff		      .byte.b	%11111111
-    213  f0d4
-    214  f0d4
-    215  f0d4
+    116  f07a
+    117  f07a							;here I have used two lines of the opverscan just to clear the PF regs before the next frame 
+    118  f07a		       85 02		      sta	WSYNC	; Wait for SYNC (halts CPU until end of scanline)
+    119  f07c		       a9 02		      lda	#2	; LoaD Accumulator with 2 so D1=1
+    120  f07e		       85 01		      sta	VBLANK	; STore Accumulator to VBLANK, D1=1 turns image output off
+    121  f080
+    122  f080							;clear PF registers
+    123  f080		       a9 00		      lda	#0
+    124  f082		       85 0d		      sta	PF0
+    125  f084		       85 0e		      sta	PF1
+    126  f086		       85 0f		      sta	PF2
+    127  f088		       85 02		      sta	WSYNC
+    128  f08a
+    129  f08a				   overcont
+    130  f08a
+    131  f08a		       a2 1b		      ldx	#27	; LoaD X with 29 - 2 from the 2 borrowed scanlines
+    132  f08c				   osLoop
+    133  f08c		       85 02		      sta	WSYNC	; Wait for SYNC (halts CPU until end of scanline)
+    134  f08e		       ca		      dex		; DEcrement X by 1
+    135  f08f		       d0 fb		      bne	osLoop	; Branch if Not Equal to 0
+    136  f091		       60		      rts		; ReTurn from Subroutine
+    137  f092
+    138  f092
+    139  f092							;;;;;;;;Sprites;;;;;;;;;;;;;;;;;
+    140  f092				   PFG0
+    141  f092		       ff		      .byte.b	%11111111
+    142  f093		       10		      .byte.b	%00010000
+    143  f094		       10		      .byte.b	%00010000
+    144  f095		       10		      .byte.b	%00010000
+    145  f096		       10		      .byte.b	%00010000
+    146  f097		       10		      .byte.b	%00010000
+    147  f098		       10		      .byte.b	%00010000
+    148  f099		       10		      .byte.b	%00010000
+    149  f09a		       10		      .byte.b	%00010000
+    150  f09b		       10		      .byte.b	%00010000
+    151  f09c		       ff		      .byte.b	%11111111
+    152  f09d
+    153  f09d				   PFG1
+    154  f09d		       ff		      .byte.b	%11111111
+    155  f09e		       00		      .byte.b	%00000000
+    156  f09f		       f0		      .byte.b	%11110000
+    157  f0a0		       30		      .byte.b	%00110000
+    158  f0a1		       30		      .byte.b	%00110000
+    159  f0a2		       f0		      .byte.b	%11110000
+    160  f0a3		       c0		      .byte.b	%11000000
+    161  f0a4		       c0		      .byte.b	%11000000
+    162  f0a5		       f0		      .byte.b	%11110000
+    163  f0a6		       00		      .byte.b	%00000000
+    164  f0a7		       ff		      .byte.b	%11111111
+    165  f0a8
+    166  f0a8				   PFG2
+    167  f0a8		       ff		      .byte.b	%11111111
+    168  f0a9		       00		      .byte.b	%00000000
+    169  f0aa		       0f		      .byte.b	%00001111
+    170  f0ab		       0c		      .byte.b	%00001100
+    171  f0ac		       0c		      .byte.b	%00001100
+    172  f0ad		       0f		      .byte.b	%00001111
+    173  f0ae		       0c		      .byte.b	%00001100
+    174  f0af		       0c		      .byte.b	%00001100
+    175  f0b0		       0f		      .byte.b	%00001111
+    176  f0b1		       00		      .byte.b	%00000000
+    177  f0b2		       ff		      .byte.b	%11111111
+    178  f0b3				   PFG3
+    179  f0b3		       ff		      .byte.b	%11111111
+    180  f0b4		       00		      .byte.b	%00000000
+    181  f0b5		       f0		      .byte.b	%11110000
+    182  f0b6		       90		      .byte.b	%10010000
+    183  f0b7		       90		      .byte.b	%10010000
+    184  f0b8		       90		      .byte.b	%10010000
+    185  f0b9		       90		      .byte.b	%10010000
+    186  f0ba		       90		      .byte.b	%10010000
+    187  f0bb		       f0		      .byte.b	%11110000
+    188  f0bc		       00		      .byte.b	%00000000
+    189  f0bd		       ff		      .byte.b	%11111111
+    190  f0be
+    191  f0be
+    192  f0be				   PFG4
+    193  f0be		       ff		      .byte.b	%11111111
+    194  f0bf		       00		      .byte.b	%00000000
+    195  f0c0		       3c		      .byte.b	%00111100
+    196  f0c1		       24		      .byte.b	%00100100
+    197  f0c2		       24		      .byte.b	%00100100
+    198  f0c3		       24		      .byte.b	%00100100
+    199  f0c4		       24		      .byte.b	%00100100
+    200  f0c5		       24		      .byte.b	%00100100
+    201  f0c6		       3c		      .byte.b	%00111100
+    202  f0c7		       00		      .byte.b	%00000000
+    203  f0c8		       ff		      .byte.b	%11111111
+    204  f0c9				   PFG5
+    205  f0c9		       ff		      .byte.b	%11111111
+    206  f0ca		       80		      .byte.b	%10000000
+    207  f0cb		       b6		      .byte.b	%10110110
+    208  f0cc		       b6		      .byte.b	%10110110
+    209  f0cd		       b6		      .byte.b	%10110110
+    210  f0ce		       b6		      .byte.b	%10110110
+    211  f0cf		       80		      .byte.b	%10000000
+    212  f0d0		       b6		      .byte.b	%10110110
+    213  f0d1		       b6		      .byte.b	%10110110
+    214  f0d2		       80		      .byte.b	%10000000
+    215  f0d3		       ff		      .byte.b	%11111111
     216  f0d4
-    217  f0d4							;;;;;;;;;Reset vectors;;;;;;;;;;;;;
-    218  f0d4					      seg
-    219  fffa					      ORG	$FFFA
-    220  fffa		       00 f0		      .word.w	$F000
-    221  fffc		       00 f0		      .word.w	$F000
-    222  fffe		       00 f0		      .word.w	$F000
+    217  f0d4
+    218  f0d4
+    219  f0d4
+    220  f0d4							;;;;;;;;;Reset vectors;;;;;;;;;;;;;
+    221  f0d4					      seg
+    222  fffa					      ORG	$FFFA
+    223  fffa		       00 f0		      .word.w	$F000
+    224  fffc		       00 f0		      .word.w	$F000
+    225  fffe		       00 f0		      .word.w	$F000

@@ -92,11 +92,11 @@ drawPF2
     lda PFG2,y
     sta PF2
 
-
+    ;6 cycles to play with 
     nop             ;spare time to cycle past Drawing PF
     nop             ;spare time to cycle past Drawing PF 
     nop             ;spare time to cycle past Drawing PF
-    ;nop             ;spare time to cycle past Drawing PF
+
     
     
     ;draw first half of the PF can be done imendiatly are PF0 has been drawn to display 
@@ -113,10 +113,13 @@ KernelEndOfLine
     rts             ; ReTurn from Subroutine
 
 OverScan:
+
+    ;here I have used two lines of the opverscan just to clear the PF regs before the next frame 
     sta WSYNC   ; Wait for SYNC (halts CPU until end of scanline)
     lda #2      ; LoaD Accumulator with 2 so D1=1
     sta VBLANK  ; STore Accumulator to VBLANK, D1=1 turns image output off
 
+    ;clear PF registers
     lda #0 
     sta PF0
     sta PF1
@@ -125,7 +128,7 @@ OverScan:
     
 overcont
 
-    ldx #27     ; LoaD X with 27
+    ldx #27     ; LoaD X with 29 - 2 from the 2 borrowed scanlines
 osLoop:
     sta WSYNC   ; Wait for SYNC (halts CPU until end of scanline)
     dex         ; DEcrement X by 1
