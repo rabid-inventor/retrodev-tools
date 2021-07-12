@@ -1,5 +1,5 @@
 --- Symbol List (sorted by symbol)
-----                     f04a                  
+----                     f09c                  
 0.FREE_BYTES             0000                  
 1.CLEAR_STACK            f005              (R )
 AUDC0                    0015                  
@@ -9,7 +9,7 @@ AUDF1                    0018
 AUDV0                    0019                  
 AUDV1                    001a                  
 COLUBK                   0009              (R )
-COLUP0                   0006                  
+COLUP0                   0006              (R )
 COLUP1                   0007                  
 COLUPF                   0008                  
 CTRLPF                   000a                  
@@ -22,19 +22,20 @@ CXM1P                    0001
 CXP0FB                   0002                  
 CXP1FB                   0003                  
 CXPPMM                   0007                  
-drawSprite1              f00f                  
+drawSprite1              f01b              (R )
+drawSprite2              f026                  
 ENABL                    001f                  
 ENAM0                    001d                  
 ENAM1                    001e                  
 FRAME_COUNT              0081                  
-GRP0                     001b                  
+GRP0                     001b              (R )
 GRP1                     001c                  
 HMBL                     0024                  
 HMCLR                    002b                  
 HMM0                     0022                  
 HMM1                     0023                  
-HMOVE                    002a                  
-HMP0                     0020                  
+HMOVE                    002a              (R )
+HMP0                     0020              (R )
 HMP1                     0021                  
 INPT0                    0008                  
 INPT1                    0009                  
@@ -44,24 +45,28 @@ INPT4                    000c
 INPT5                    000d                  
 INTIM                    0284                  
 LINE_COUNT               0080              (R )
-NEXT_P_SPRITE            0084              (R )
+NEXT_P_SPRITE            0086              (R )
 NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC_LINES               00c0                  
 NUSIZ0                   0004                  
 NUSIZ1                   0005                  
-Overscan                 f043              (R )
-P_SPRITE_ADD             0089                  
+Overscan                 f095              (R )
+OVERSCAN_LINES           001e              (R )
+P_SPRITE_ADD             0085                  
 PAL_LINES                00f2              (R )
 PF0                      000d                  
-PF0G                     0084                  
+PF0G                     0088                  
 PF1                      000e                  
-PF1G                     0085                  
+PF1G                     0089                  
 PF2                      000f                  
-PF2G                     0086                  
-Picture                  f030              (R )
-PLAYER_POS_X             0082                  
-PLAYER_POX_Y             0083                  
-prepSpite1               f00a                  
+PF2G                     0090                  
+Picture                  f06e              (R )
+Picture1                 f07b              (R )
+PictureEOL               f088              (R )
+PLAYER_POS_TUNE          0084              (R )
+PLAYER_POS_X             0082              (R )
+PLAYER_POS_Y             0083              (R )
+prepSpite1               f00a              (R )
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -69,18 +74,20 @@ RESM0                    0012
 RESM1                    0013                  
 RESMP0                   0028                  
 RESMP1                   0029                  
-RESP0                    0010                  
-RESP1                    0011                  
+RESP0                    0010              (R )
+RESP1                    0011              (R )
 RSYNC                    0003                  
 skullfwd                 fa00                  
-Sprite2                  fa08                  
+Sprit1rtn                f057              (R )
+SPRITE1LINE              0091              (R )
+Sprite2                  fa08              (R )
 Sprite3                  fa10                  
 Sprite4                  fa18                  
 Sprite5                  fa20                  
 Sprite6                  fa28                  
 Sprite7                  fa30                  
-SPRITE_LOC               0085                  
-StartOfFrame             f00f              (R )
+SPRITE_LOC               0087                  
+StartOfFrame             f02b              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
 SWCHA                    0280                  
@@ -99,9 +106,10 @@ VDELP0                   0025
 VDELP1                   0026                  
 VERSION_MACRO            006d                  
 VERSION_VCS              006a                  
-VERT_BLANK               0025              (R )
-VerticalBlank            f023              (R )
+VERT_BLANK               001e              (R )
+VerticalBlank            f061              (R )
 VSYNC                    0000              (R )
 WSYNC                    0002              (R )
-x                        0000 ????         (R )
+xpos                     f040                  
+xposloop                 f042                  
 --- End of Symbol List.

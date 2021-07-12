@@ -1,7 +1,7 @@
-------- FILE GOS.asm LEVEL 1 PASS 3
+------- FILE GOS.asm LEVEL 1 PASS 2
       1  10000 ????						; Typical first few lines in an Atari 2600 program ...
       2  10000 ????				       processor	6502
-------- FILE vcs.h LEVEL 2 PASS 3
+------- FILE vcs.h LEVEL 2 PASS 2
       0  10000 ????				       include	"vcs.h"
       1  10000 ????						; VCS.H
       2  10000 ????						; Version 1.06, 06/SEP/2020
@@ -204,7 +204,7 @@
     199  10000 ????
     200  10000 ????						; EOF
 ------- FILE GOS.asm
-------- FILE macro.h LEVEL 2 PASS 3
+------- FILE macro.h LEVEL 2 PASS 2
       0  10000 ????				       include	"macro.h"
       1  10000 ????						; MACRO.H
       2  10000 ????						; Version 1.09, 05/SEP/2020
@@ -378,23 +378,28 @@
     170  10000 ????						; EOF
 ------- FILE GOS.asm
       5  10000 ????
-      6  10000 ????		00 25	    VERT_BLANK =	#37
-      7  10000 ????		00 c0	    NTSC_LINES =	#192
-      8  10000 ????		00 f2	    PAL_LINES  =	#242
-      9  10000 ????
-     10  10000 ????		00 80	    LINE_COUNT =	$80
-     11  10000 ????		00 81	    FRAME_COUNT =	$81
-     12  10000 ????		00 82	    PLAYER_POS_X =	$82
-     13  10000 ????		00 83	    PLAYER_POX_Y =	$83
-     14  10000 ????		00 89	    P_SPRITE_ADD =	$89
-     15  10000 ????		00 84	    NEXT_P_SPRITE =	$84
-     16  10000 ????		00 85	    SPRITE_LOC =	$85
-     17  10000 ????		00 84	    PF0G       =	$84
-     18  10000 ????		00 85	    PF1G       =	$85
-     19  10000 ????		00 86	    PF2G       =	$86
-     20  10000 ????
-     21  10000 ????
-     22  f000					      ORG	$F000
+      6  10000 ????						;Screen defines 
+      7  10000 ????		00 1e	    VERT_BLANK =	#30	; 37 - lines of processing currently 7
+      8  10000 ????		00 c0	    NTSC_LINES =	#192
+      9  10000 ????		00 f2	    PAL_LINES  =	#242
+     10  10000 ????		00 1e	    OVERSCAN_LINES =	#30
+     11  10000 ????
+     12  10000 ????						;RAM usage (no more than 128 - stack)
+     13  10000 ????		00 80	    LINE_COUNT =	$80
+     14  10000 ????		00 81	    FRAME_COUNT =	$81
+     15  10000 ????		00 82	    PLAYER_POS_X =	$82
+     16  10000 ????		00 83	    PLAYER_POS_Y =	$83
+     17  10000 ????		00 84	    PLAYER_POS_TUNE =	$84
+     18  10000 ????		00 85	    P_SPRITE_ADD =	$85
+     19  10000 ????		00 86	    NEXT_P_SPRITE =	$86
+     20  10000 ????		00 87	    SPRITE_LOC =	$87
+     21  10000 ????		00 88	    PF0G       =	$88
+     22  10000 ????		00 89	    PF1G       =	$89
+     23  10000 ????		00 90	    PF2G       =	$90
+     24  10000 ????		00 91	    SPRITE1LINE =	$91
+     25  10000 ????
+     26  10000 ????
+     27  f000					      ORG	$F000
       0  f000					      CLEAN_START
       1  f000		       78		      sei
       2  f001		       d8		      cld
@@ -411,194 +416,246 @@
      13  f007		       48		      pha
      14  f008		       d0 fb		      bne	.CLEAR_STACK
      15  f00a
-     24  f00a
-     25  f00a							;prep sprite used to buffer sprite line into page zero ram ready for drawing cycle
-     26  f00a							;x = address if sprite
-     27  f00a							;y = index if sprite line
-     28  f00a							;a used to move sprite 	
-     29  f00a				   prepSpite1
-     30  f00a
-     31  f00a		       b9 00 00 	      lda	x,y
-     32  f00d		       85 84		      sta	NEXT_P_SPRITE
-     33  f00f
-     34  f00f
-     35  f00f				   drawSprite1
-     36  f00f
-     37  f00f
-     38  f00f
-     39  f00f
-     40  f00f
-     41  f00f
-     42  f00f
-     43  f00f				   StartOfFrame
-     44  f00f
-     45  f00f
-     46  f00f
-     47  f00f							; Start of new frame
-     48  f00f							; Start of vertical blank processing
-     49  f00f
-     50  f00f		       a9 00		      lda	#0
-     51  f011		       85 01		      sta	VBLANK
-     52  f013		       a9 02		      lda	#2
-     53  f015		       85 00		      sta	VSYNC
-     54  f017							;stuff
-     55  f017		       85 02		      sta	WSYNC
-     56  f019							;stuff
-     57  f019		       85 02		      sta	WSYNC
-     58  f01b							;stuff
-     59  f01b		       85 02		      sta	WSYNC	; 3 scanlines of VSYNC signal
-     60  f01d		       a9 00		      lda	#0
-     61  f01f		       85 00		      sta	VSYNC
-     62  f021
-     63  f021
-     64  f021							;------------------------------------------------
-     65  f021
-     66  f021							; 37 scanlines of vertical blank...
-     67  f021
-     68  f021
-     69  f021
-     70  f021		       a2 00		      ldx	#0
-     71  f023
-     72  f023		       85 02	   VerticalBlank sta	WSYNC
-     73  f025
-     74  f025							; stuff can be done here no more than 70 machine cycles
-     75  f025
-     76  f025		       e8		      inx
-     77  f026		       e0 25		      cpx	#VERT_BLANK
-     78  f028		       d0 f9		      bne	VerticalBlank
-     79  f02a
-     80  f02a							;------------------------------------------------
-     81  f02a
-     82  f02a							; Do 192 scanlines of color-changing (our picture)
-     83  f02a
-     84  f02a		       a2 37		      ldx	#55
-     85  f02c		       86 09		      stx	COLUBK
-     86  f02e		       a2 00		      ldx	#0	; this counts our scanline number
-     87  f030							;sta 60
-     88  f030
-     89  f030
-     90  f030				   Picture		; change background color (rainbow effect)
-     91  f030							;lda #1
-     92  f030
-     93  f030		       86 80		      stx	LINE_COUNT
-     94  f032
-     95  f032		       a2 00		      ldx	#0
-     96  f034		       86 02		      stx	WSYNC	; wait till end of scanline
-     97  f036							; I can do stuff here but not much 22 cpu cycles
-     98  f036
-     99  f036
-    100  f036							;do this at the end  
-    101  f036		       a6 80		      ldx	LINE_COUNT
-    102  f038		       e8		      inx
-    103  f039		       e0 f2		      cpx	#PAL_LINES	;cycle counting
-    104  f03b		       d0 f3		      bne	Picture
-    105  f03d
-    106  f03d
-    107  f03d							;--------------------------------------------	     ;------------------------------------------------
-    108  f03d
-    109  f03d		       a9 42		      lda	#%01000010
-    110  f03f
-    111  f03f		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    112  f041
-    113  f041
-    114  f041
-    115  f041							; 30 scanlines of overscan...
-    116  f041
-    117  f041
-    118  f041
-    119  f041		       a2 00		      ldx	#0
-    120  f043
-    121  f043		       85 02	   Overscan   sta	WSYNC
-    122  f045
-    123  f045		       e8		      inx
-    124  f046
-    125  f046		       e0 1e		      cpx	#30
-    126  f048
-    127  f048		       d0 f9		      bne	Overscan
-    128  f04a
-    129  f04a
-    130  f04a
-    131  f04a
-    132  f04a
-    133  f04a
-    134  f04a
-    135  f04a
-    136  f04a
-    137  f04a				   ----
-    138  f04a
-    139  f04a		       4c 0f f0 	      jmp	StartOfFrame	; return to begining of the frame
-    140  f04d
-    141  fa00					      ORG	$FA00
-    142  fa00							;Created using Atari Dev Studio
-    143  fa00							;assembly format (bottom to top)
-    144  fa00
-    145  fa00				   skullfwd
-    146  fa00		       00		      .byte.b	%00000000	;
-    147  fa01		       54		      .byte.b	%01010100	;
-    148  fa02		       7c		      .byte.b	%01111100	;
-    149  fa03		       6c		      .byte.b	%01101100	;
-    150  fa04		       ee		      .byte.b	%11101110	;
-    151  fa05		       92		      .byte.b	%10010010	;
-    152  fa06		       92		      .byte.b	%10010010	;
-    153  fa07		       7c		      .byte.b	%01111100	;
-    154  fa08				   Sprite2
-    155  fa08		       00		      .byte.b	%00000000	;
-    156  fa09		       54		      .byte.b	%01010100	;
-    157  fa0a		       7c		      .byte.b	%01111100	;
-    158  fa0b		       6c		      .byte.b	%01101100	;
-    159  fa0c		       fe		      .byte.b	%11111110	;
-    160  fa0d		       92		      .byte.b	%10010010	;
-    161  fa0e		       92		      .byte.b	%10010010	;
-    162  fa0f		       7c		      .byte.b	%01111100	;
-    163  fa10				   Sprite3
-    164  fa10		       00		      .byte.b	%00000000	;
-    165  fa11		       54		      .byte.b	%01010100	;
-    166  fa12		       7c		      .byte.b	%01111100	;
-    167  fa13		       6c		      .byte.b	%01101100	;
-    168  fa14		       fe		      .byte.b	%11111110	;
-    169  fa15		       92		      .byte.b	%10010010	;
-    170  fa16		       92		      .byte.b	%10010010	;
-    171  fa17		       7c		      .byte.b	%01111100	;
-    172  fa18				   Sprite4
-    173  fa18		       00		      .byte.b	%00000000	;
-    174  fa19		       50		      .byte.b	%01010000	;
-    175  fa1a		       7b		      .byte.b	%01111011	;
-    176  fa1b		       58		      .byte.b	%01011000	;
-    177  fa1c		       dc		      .byte.b	%11011100	;
-    178  fa1d		       ac		      .byte.b	%10101100	;
-    179  fa1e		       af		      .byte.b	%10101111	;
-    180  fa1f		       78		      .byte.b	%01111000	;
-    181  fa20				   Sprite5
-    182  fa20		       00		      .byte.b	%00000000	;
-    183  fa21		       28		      .byte.b	%00101000	;
-    184  fa22		       3d		      .byte.b	%00111101	;
-    185  fa23		       2c		      .byte.b	%00101100	;
-    186  fa24		       6e		      .byte.b	%01101110	;
-    187  fa25		       56		      .byte.b	%01010110	;
-    188  fa26		       57		      .byte.b	%01010111	;
-    189  fa27		       3c		      .byte.b	%00111100	;
-    190  fa28				   Sprite6
-    191  fa28		       28		      .byte.b	%00101000	;
-    192  fa29		       3d		      .byte.b	%00111101	;
-    193  fa2a		       2c		      .byte.b	%00101100	;
-    194  fa2b		       6e		      .byte.b	%01101110	;
-    195  fa2c		       56		      .byte.b	%01010110	;
-    196  fa2d		       57		      .byte.b	%01010111	;
-    197  fa2e		       3c		      .byte.b	%00111100	;
-    198  fa2f		       00		      .byte.b	%00000000	;
-    199  fa30				   Sprite7
-    200  fa30		       7f		      .byte.b	%01111111	;
-    201  fa31		       88		      .byte.b	%10001000	;
-    202  fa32		       90		      .byte.b	%10010000	;
-    203  fa33		       6f		      .byte.b	%01101111	;
-    204  fa34		       90		      .byte.b	%10010000	;
-    205  fa35		       12		      .byte.b	%00010010	;
-    206  fa36		       14		      .byte.b	%00010100	;
-    207  fa37		       ef		      .byte.b	%11101111	;
-    208  fa38
-    209  fa38
-    210  fa38					      seg
-    211  fffa					      ORG	$FFFA
-    212  fffa		       00 f0		      .word.w	$F000
-    213  fffc		       00 f0		      .word.w	$F000
-    214  fffe		       00 f0		      .word.w	$F000
+     29  f00a
+     30  f00a							;prep sprite used to buffer sprite line into page zero ram ready for drawing cycle
+     31  f00a							;y = address if sprite
+     32  f00a							;x = index if sprite line
+     33  f00a							;a used to move sprite 	
+     34  f00a				   prepSpite1
+     35  f00a		       e0 00		      cpx	#0
+     36  f00c		       f0 6d		      beq	Picture1
+     37  f00e		       bd 08 fa 	      lda	Sprite2,x
+     38  f011		       85 86		      sta	NEXT_P_SPRITE
+     39  f013		       85 1b		      sta	GRP0
+     40  f015		       ca		      dex
+     41  f016		       86 91		      stx	SPRITE1LINE
+     42  f018		       4c 7b f0 	      jmp	Picture1
+     43  f01b
+     44  f01b
+     45  f01b				   drawSprite1
+     46  f01b		       ea		      nop
+     47  f01c		       e8		      inx
+     48  f01d		       e4 82		      cpx	PLAYER_POS_X
+     49  f01f		       10 fa		      bpl	drawSprite1
+     50  f021		       85 10		      sta	RESP0
+     51  f023		       4c 57 f0 	      jmp	Sprit1rtn
+     52  f026
+     53  f026				   drawSprite2
+     54  f026		       85 11		      sta	RESP1
+     55  f028		       4c 57 f0 	      jmp	Sprit1rtn
+     56  f02b
+     57  f02b
+     58  f02b				   StartOfFrame
+     59  f02b							; Start of new frame
+     60  f02b							; Start of vertical blank processing
+     61  f02b
+     62  f02b		       a9 00		      lda	#0
+     63  f02d		       85 01		      sta	VBLANK
+     64  f02f		       a9 02		      lda	#2
+     65  f031		       85 00		      sta	VSYNC
+     66  f033							;setting player y pos
+     67  f033
+     68  f033		       a6 83		      ldx	PLAYER_POS_Y
+     69  f035		       e8		      inx
+     70  f036		       86 83		      stx	PLAYER_POS_Y
+     71  f038		       a2 14		      ldx	#20
+     72  f03a		       86 82		      stx	PLAYER_POS_X
+     73  f03c		       86 06		      stx	COLUP0
+     74  f03e		       85 02		      sta	WSYNC	; follow sets player X possition 
+     75  f040				   xpos
+     76  f040		       a2 00		      ldx	#0
+     77  f042				   xposloop
+     78  f042							;jmp drawSprite1
+     79  f042							;jmp xposloop
+     80  f042
+     81  f042							;stuff
+     82  f042		       85 02		      sta	WSYNC
+     83  f044		       a6 84		      ldx	PLAYER_POS_TUNE
+     84  f046		       86 20		      stx	HMP0	;preload player fine tune possition 
+     85  f048							;stuff
+     86  f048		       86 2a		      stx	HMOVE
+     87  f04a		       85 02		      sta	WSYNC	; 3 scanlines of VSYNC signal
+     88  f04c
+     89  f04c		       a9 00		      lda	#0
+     90  f04e		       85 00		      sta	VSYNC
+     91  f050
+     92  f050
+     93  f050							;------------------------------------------------
+     94  f050
+     95  f050							; 37 scanlines of vertical blank...
+     96  f050
+     97  f050
+     98  f050
+     99  f050
+    100  f050
+    101  f050
+    102  f050
+    103  f050		       85 02		      sta	WSYNC	;set sprite 1 possition
+    104  f052		       a2 00		      ldx	#0
+    105  f054		       4c 1b f0 	      jmp	drawSprite1
+    106  f057				   Sprit1rtn
+    107  f057
+    108  f057		       85 02		      sta	WSYNC
+    109  f059		       85 02		      sta	WSYNC
+    110  f05b		       85 02		      sta	WSYNC
+    111  f05d		       85 02		      sta	WSYNC
+    112  f05f		       a2 00		      ldx	#0
+    113  f061				   VerticalBlank
+    114  f061		       85 02		      sta	WSYNC
+    115  f063
+    116  f063							; stuff can be done here no more than 70 machine cycles
+    117  f063
+    118  f063		       e8		      inx
+    119  f064		       e0 1e		      cpx	#VERT_BLANK
+    120  f066		       d0 f9		      bne	VerticalBlank
+    121  f068
+    122  f068							;------------------------------------------------
+    123  f068
+    124  f068							; Do 192 scanlines of color-changing (our picture)
+    125  f068
+    126  f068		       a2 0c		      ldx	#12
+    127  f06a		       86 09		      stx	COLUBK
+    128  f06c		       a2 00		      ldx	#0	; this counts our scanline number
+    129  f06e
+    130  f06e
+    131  f06e							;------------------screen update routunes (tight timing)-----------------
+    132  f06e				   Picture
+    133  f06e
+    134  f06e
+    135  f06e		       86 80		      stx	LINE_COUNT
+    136  f070		       a9 00		      lda	#0
+    137  f072		       85 1b		      sta	GRP0
+    138  f074		       85 02		      sta	WSYNC	; wait till end of scanline
+    139  f076							; I can do stuff here but not much 22 cpu cycles
+    140  f076							;check if line has sprite or next sprite
+    141  f076							;ldy Sprite2 ; load address od sprite
+    142  f076		       a6 91		      ldx	SPRITE1LINE	;3
+    143  f078		       4c 0a f0 	      jmp	prepSpite1	;3
+    144  f07b				   Picture1
+    145  f07b		       a6 80		      ldx	LINE_COUNT
+    146  f07d		       e4 83		      cpx	PLAYER_POS_Y
+    147  f07f		       d0 07		      bne	PictureEOL
+    148  f081		       a9 08		      lda	#8
+    149  f083		       85 91		      sta	SPRITE1LINE
+    150  f085
+    151  f085		       4c 88 f0 	      jmp	PictureEOL
+    152  f088
+    153  f088
+    154  f088							;do this at the end  
+    155  f088				   PictureEOL
+    156  f088		       a6 80		      ldx	LINE_COUNT
+    157  f08a		       e8		      inx
+    158  f08b		       e0 f2		      cpx	#PAL_LINES	;cycle counting
+    159  f08d		       d0 df		      bne	Picture
+    160  f08f
+    161  f08f
+    162  f08f							;--------------------------------------------	     
+    163  f08f							;--------------------------------------------
+    164  f08f
+    165  f08f		       a9 42		      lda	#%01000010
+    166  f091
+    167  f091		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    168  f093
+    169  f093
+    170  f093
+    171  f093							; 30 scanlines of overscan...
+    172  f093
+    173  f093
+    174  f093
+    175  f093		       a2 00		      ldx	#0
+    176  f095
+    177  f095				   Overscan
+    178  f095		       85 02		      sta	WSYNC
+    179  f097
+    180  f097		       e8		      inx
+    181  f098
+    182  f098		       e0 1e		      cpx	#OVERSCAN_LINES
+    183  f09a
+    184  f09a		       d0 f9		      bne	Overscan
+    185  f09c
+    186  f09c
+    187  f09c
+    188  f09c
+    189  f09c
+    190  f09c
+    191  f09c
+    192  f09c
+    193  f09c
+    194  f09c				   ----
+    195  f09c
+    196  f09c		       4c 2b f0 	      jmp	StartOfFrame	; return to begining of the frame
+    197  f09f
+    198  fa00					      ORG	$FA00
+    199  fa00							;Created using Atari Dev Studio
+    200  fa00							;assembly format (bottom to top)
+    201  fa00
+    202  fa00				   skullfwd
+    203  fa00		       00		      .byte.b	%00000000	;
+    204  fa01		       54		      .byte.b	%01010100	;
+    205  fa02		       7c		      .byte.b	%01111100	;
+    206  fa03		       6c		      .byte.b	%01101100	;
+    207  fa04		       ee		      .byte.b	%11101110	;
+    208  fa05		       92		      .byte.b	%10010010	;
+    209  fa06		       92		      .byte.b	%10010010	;
+    210  fa07		       7c		      .byte.b	%01111100	;
+    211  fa08				   Sprite2
+    212  fa08		       00		      .byte.b	%00000000	;
+    213  fa09		       54		      .byte.b	%01010100	;
+    214  fa0a		       7c		      .byte.b	%01111100	;
+    215  fa0b		       6c		      .byte.b	%01101100	;
+    216  fa0c		       fe		      .byte.b	%11111110	;
+    217  fa0d		       92		      .byte.b	%10010010	;
+    218  fa0e		       92		      .byte.b	%10010010	;
+    219  fa0f		       7c		      .byte.b	%01111100	;
+    220  fa10				   Sprite3
+    221  fa10		       00		      .byte.b	%00000000	;
+    222  fa11		       54		      .byte.b	%01010100	;
+    223  fa12		       7c		      .byte.b	%01111100	;
+    224  fa13		       6c		      .byte.b	%01101100	;
+    225  fa14		       fe		      .byte.b	%11111110	;
+    226  fa15		       92		      .byte.b	%10010010	;
+    227  fa16		       92		      .byte.b	%10010010	;
+    228  fa17		       7c		      .byte.b	%01111100	;
+    229  fa18				   Sprite4
+    230  fa18		       00		      .byte.b	%00000000	;
+    231  fa19		       50		      .byte.b	%01010000	;
+    232  fa1a		       7b		      .byte.b	%01111011	;
+    233  fa1b		       58		      .byte.b	%01011000	;
+    234  fa1c		       dc		      .byte.b	%11011100	;
+    235  fa1d		       ac		      .byte.b	%10101100	;
+    236  fa1e		       af		      .byte.b	%10101111	;
+    237  fa1f		       78		      .byte.b	%01111000	;
+    238  fa20				   Sprite5
+    239  fa20		       00		      .byte.b	%00000000	;
+    240  fa21		       28		      .byte.b	%00101000	;
+    241  fa22		       3d		      .byte.b	%00111101	;
+    242  fa23		       2c		      .byte.b	%00101100	;
+    243  fa24		       6e		      .byte.b	%01101110	;
+    244  fa25		       56		      .byte.b	%01010110	;
+    245  fa26		       57		      .byte.b	%01010111	;
+    246  fa27		       3c		      .byte.b	%00111100	;
+    247  fa28				   Sprite6
+    248  fa28		       28		      .byte.b	%00101000	;
+    249  fa29		       3d		      .byte.b	%00111101	;
+    250  fa2a		       2c		      .byte.b	%00101100	;
+    251  fa2b		       6e		      .byte.b	%01101110	;
+    252  fa2c		       56		      .byte.b	%01010110	;
+    253  fa2d		       57		      .byte.b	%01010111	;
+    254  fa2e		       3c		      .byte.b	%00111100	;
+    255  fa2f		       00		      .byte.b	%00000000	;
+    256  fa30				   Sprite7
+    257  fa30		       7f		      .byte.b	%01111111	;
+    258  fa31		       88		      .byte.b	%10001000	;
+    259  fa32		       90		      .byte.b	%10010000	;
+    260  fa33		       6f		      .byte.b	%01101111	;
+    261  fa34		       90		      .byte.b	%10010000	;
+    262  fa35		       12		      .byte.b	%00010010	;
+    263  fa36		       14		      .byte.b	%00010100	;
+    264  fa37		       ef		      .byte.b	%11101111	;
+    265  fa38
+    266  fa38
+    267  fa38					      seg
+    268  fffa					      ORG	$FFFA
+    269  fffa		       00 f0		      .word.w	$F000
+    270  fffc		       00 f0		      .word.w	$F000
+    271  fffe		       00 f0		      .word.w	$F000
